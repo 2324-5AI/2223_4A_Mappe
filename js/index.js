@@ -23,6 +23,35 @@ window.onload = async function(){
             })
     });
 
+    //Intercettare il click sulla mappa
+    map.on("click", function(evento){
+        //evento ha una proprietà pixel
+        /*
+            forEachFeatureAtPixel: da pixel -> a marker
+
+
+            map.forEachFeatureAtPixel(pixel,
+             funzione richiamata per ogni feature trovata)
+        */
+        let marker = map.forEachFeatureAtPixel(evento.pixel,
+             feature => feature);
+        if(marker)
+            alert(marker.name);
+    });
+
+    /*
+        feature => feature
+
+        (feature) =>{
+            return feature;
+        }
+
+        function(feature){
+            
+            return feature;
+        }
+    */
+
     //Path rispetto alla cartella principale del progetto (non come se fossi il js)
     let layer1 = aggiungiLayer(map, "img/marker.png");
     aggiungiMarker(layer1,"Fossano", coord[0], coord[1]);
