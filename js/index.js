@@ -1,4 +1,4 @@
-var map;
+var map, modal, testoModal;
 
 var comuni = [
     {nome:"Fossano", desc:"«Quasi nel centro del Piemonte e in bellissima posizione sorge la città di Fossano posta sopra agevole poggio. Dolcemente essa guarda al levante un delizioso teatro di sparse e ben svariate collinette e una vasta pianura. La vista si spazia per un'ampia zona di terra fino alle più remote Alpi elvetiche avendosi, alla sinistra, le nevose balze del saluzzese con il Re di Pietra Monviso e, a destra, le ubertose pendici dell'Appennino.» "},
@@ -7,6 +7,9 @@ var comuni = [
 ];
 
 window.onload = async function(){
+    modal = document.getElementById("sfondoModal");
+    testoModal = document.querySelector("#myModal main");
+
     let busta = await fetch("https://nominatim.openstreetmap.org/search?format=json&city="+comuni[0].nome);
     let vet = await busta.json(); 
     let coord = [parseFloat(vet[0].lon), parseFloat(vet[0].lat)];
@@ -53,9 +56,13 @@ window.onload = async function(){
 
         let marker = map.forEachFeatureAtPixel(evento.pixel, function(feature){return feature});
         console.log(marker.dati);
-        alert(marker.dati.nome + "\n" + marker.dati.desc);
-        
+        testoModal.innerHTML = marker.dati.nome + "<br>" + marker.dati.desc;
+        modal.style.display = "flex";
     });
+}
+
+function chiudiModal(){
+    modal.style.display = "none";
 }
 
 /*
