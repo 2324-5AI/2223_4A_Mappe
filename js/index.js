@@ -1,10 +1,21 @@
 var map;
 
+var comuni = [
+    "Fossano",
+    "Cuneo",
+    "Torino",
+    "Asti",
+    "Alba",
+    "Bra",
+    "Saluzzo",
+    "Mondovì",
+    "Savigliano",
+    "Cherasco"
+];
+
 window.onload = async function(){
-    let busta = await fetch("https://nominatim.openstreetmap.org/search?format=json&city=Fossano");
+    let busta = await fetch("https://nominatim.openstreetmap.org/search?format=json&city="+comuni[0]);
     let vet = await busta.json(); 
-    console.log(vet);
-    
     let coord = [parseFloat(vet[0].lon), parseFloat(vet[0].lat)];
 
     //Definisco una mappa
@@ -25,7 +36,18 @@ window.onload = async function(){
 
     //Path rispetto alla cartella principale del progetto (non come se fossi il js)
     let layer1 = aggiungiLayer(map, "img/marker.png");
-    aggiungiMarker(layer1,"Fossano", coord[0], coord[1]);
+
+    for(let comune of comuni){
+        let promise = fetch("https://nominatim.openstreetmap.org/search?format=json&city="+comune);
+        promise.then(async function(busta){
+            let vet = await busta.json(); 
+            let coord = [parseFloat(vet[0].lon), parseFloat(vet[0].lat)];
+            aggiungiMarker(layer1, comune, coord[0], coord[1]);
+           //DOM1 RICHIAMATO QUANDO VIENE MANDATO IN ESECUZIONE THEN
+        });
+        //DOM2 FUORI DAL THEN 
+    }
+    //DOM3 -> Non è detto che siano arrivate tutte le coordinate dei comuni
 }
 
 /*
