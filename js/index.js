@@ -48,6 +48,20 @@ window.onload = async function(){
         //DOM2 FUORI DAL THEN 
     }
     //DOM3 -> Non è detto che siano arrivate tutte le coordinate dei comuni
+
+    //Gestione del click
+    map.on("click", function (evento){
+        /*
+            forEachFeatureAtPixel -> Lavora in modo simile a comuni.forEach, perciò processa tutte 
+            le feature presenti la mappa e filtra quelle cliccate
+
+            evento.pixel -> pixel cliccati con il mouse
+        */
+
+        let marker = map.forEachFeatureAtPixel(evento.pixel, function(feature){return feature});
+        alert(marker.name);
+        
+    });
 }
 
 /*
