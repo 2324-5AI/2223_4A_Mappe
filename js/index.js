@@ -1,20 +1,13 @@
 var map;
 
 var comuni = [
-    "Fossano",
-    "Cuneo",
-    "Torino",
-    "Asti",
-    "Alba",
-    "Bra",
-    "Saluzzo",
-    "Mondovì",
-    "Savigliano",
-    "Cherasco"
+    {nome:"Fossano", desc:"«Quasi nel centro del Piemonte e in bellissima posizione sorge la città di Fossano posta sopra agevole poggio. Dolcemente essa guarda al levante un delizioso teatro di sparse e ben svariate collinette e una vasta pianura. La vista si spazia per un'ampia zona di terra fino alle più remote Alpi elvetiche avendosi, alla sinistra, le nevose balze del saluzzese con il Re di Pietra Monviso e, a destra, le ubertose pendici dell'Appennino.» "},
+    {nome:"Cuneo", desc:"La città è sorta presso la confluenza dei corsi d'acqua Stura e Gesso, su un cùneo la cui caratteristica conformazione ne ha ispirato il nome[6][7]. Il nucleo più antico, e centro storico, è caratterizzato da un impianto a scacchiera che, partendo dal vertice dell'immaginario cuneo scorre lungo una via mediana che sbocca sull'ampia piazza Galimberti: la città fu infatti plasmata come cittadella militare antifrancese dai Savoia, ed è uno dei pochi capoluoghi dell'Italia settentrionale ad avere origini moderne e non romane[8][9]. "},
+    {nome:"Torino", desc:"Quarto comune italiano per popolazione e cuore di un'area metropolitana che conta circa 1,7 milioni di abitanti, Torino è il terzo complesso economico-produttivo del Paese (insieme a Milano e Genova componeva il triangolo industriale, centro dell'industrializzazione su larga scala dell'economia italiana alla fine del XIX secolo, e durante gli anni del boom economico) e costituisce uno dei maggiori poli universitari, artistici, turistici, scientifici e culturali d'Italia. Nel suo territorio sono inoltre presenti aree ed edifici inclusi in due beni protetti dall'UNESCO: alcuni palazzi e zone facenti parte del circuito di residenze sabaude in Piemonte (patrimonio dell'umanità[8]) e l'area delle colline del Po (riserva della biosfera). "}
 ];
 
 window.onload = async function(){
-    let busta = await fetch("https://nominatim.openstreetmap.org/search?format=json&city="+comuni[0]);
+    let busta = await fetch("https://nominatim.openstreetmap.org/search?format=json&city="+comuni[0].nome);
     let vet = await busta.json(); 
     let coord = [parseFloat(vet[0].lon), parseFloat(vet[0].lat)];
 
@@ -38,7 +31,7 @@ window.onload = async function(){
     let layer1 = aggiungiLayer(map, "img/marker.png");
 
     for(let comune of comuni){
-        let promise = fetch("https://nominatim.openstreetmap.org/search?format=json&city="+comune);
+        let promise = fetch("https://nominatim.openstreetmap.org/search?format=json&city="+comune.nome);
         promise.then(async function(busta){
             let vet = await busta.json(); 
             let coord = [parseFloat(vet[0].lon), parseFloat(vet[0].lat)];
@@ -59,7 +52,8 @@ window.onload = async function(){
         */
 
         let marker = map.forEachFeatureAtPixel(evento.pixel, function(feature){return feature});
-        alert(marker.name);
+        console.log(marker.dati);
+        alert(marker.dati.nome + "\n" + marker.dati.desc);
         
     });
 }
@@ -90,14 +84,17 @@ function aggiungiLayer(mappa, pathImg){
 /**
  * Aggiunge un nuovo marker in un layer
  * @param {*} layer 
- * @param {*} nome Testo da visualizzare 
+ * @param {*} dati Dati legati al marker
  * @param {*} lon:float Longitudine 
  * @param {*} lat:float Latitudine
  */
-function aggiungiMarker(layer, nome, lon, lat){
+function aggiungiMarker(layer, dati,  lon, lat){
     let punto = new ol.geom.Point(ol.proj.fromLonLat([lon, lat]));
     let marker = new ol.Feature(punto);
-    marker.name = nome;
+
+    dati.lon = lon;
+    dati.lat = lat;
+    marker.dati = dati;
 
     //Inserisce il marker nel layer passato per parametro 
     layer.getSource().addFeature(marker);
